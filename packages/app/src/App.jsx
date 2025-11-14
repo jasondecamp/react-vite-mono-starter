@@ -1,11 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { Button } from '@react-vite-mono-starter/ui'
+import { formatDate, capitalize, getLocalStorage, setLocalStorage } from '@react-vite-mono-starter/services'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(() => getLocalStorage('count', 0))
+  const [lastUpdated, setLastUpdated] = useState(new Date())
+
+  useEffect(() => {
+    setLocalStorage('count', count)
+  }, [count])
+
+  const handleClick = () => {
+    setCount((count) => count + 1)
+    setLastUpdated(new Date())
+  }
 
   return (
     <>
@@ -17,16 +28,19 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>{capitalize('vite')} + {capitalize('react')}</h1>
       <div className="card">
         <Button 
           label={`count is ${count}`} 
-          onClick={() => setCount((count) => count + 1)}
+          onClick={handleClick}
           variant="primary"
           size="medium"
         />
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
+        </p>
+        <p style={{ fontSize: '0.9em', color: '#888' }}>
+          Last updated: {formatDate(lastUpdated)}
         </p>
       </div>
       <p className="read-the-docs">

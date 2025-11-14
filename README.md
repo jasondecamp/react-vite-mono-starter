@@ -8,6 +8,7 @@ This monorepo uses [Lerna](https://lerna.js.org/) and Yarn Workspaces to manage 
 
 - **`packages/app`** - React + Vite standalone application
 - **`packages/ui`** - React component library with Storybook
+- **`packages/services`** - Shared utilities and helper functions (no build step)
 
 ## 🚀 Getting Started
 
@@ -60,6 +61,23 @@ A React component library with Storybook for component development and documenta
 - `yarn workspace @react-vite-mono-starter/ui storybook` - Start Storybook
 - `yarn workspace @react-vite-mono-starter/ui build` - Build the library
 - `yarn workspace @react-vite-mono-starter/ui build-storybook` - Build Storybook for deployment
+
+### Services (`@react-vite-mono-starter/services`)
+
+A shared package containing utilities and helper functions used across the monorepo. This package does not have its own build process and exports source files directly.
+
+**Features:**
+- Utility functions (date formatting, debouncing, ID generation, string manipulation)
+- Browser helpers (localStorage management, className builder)
+- No build step required - imports source files directly
+
+**Usage example:**
+```javascript
+import { formatDate, classNames } from '@react-vite-mono-starter/services';
+// Or import from specific modules
+import { debounce } from '@react-vite-mono-starter/services/utils';
+import { getLocalStorage } from '@react-vite-mono-starter/services/helpers';
+```
 
 ## 🛠️ Technologies
 
