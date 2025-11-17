@@ -1,0 +1,12 @@
+{
+  "name": "@react-vite-mono-starter/services",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./utils": "./src/utils/index.js",
+    "./helpers": "./src/helpers/index.js"
+  }
+}
