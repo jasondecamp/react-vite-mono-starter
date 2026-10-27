@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-vite-mono-starter/services": "0.0.0",
-    "@react-vite-mono-starter/ui": "0.0.0",
+    "@react-vite-mono-starter/services": "workspace:*",
+    "@react-vite-mono-starter/ui": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

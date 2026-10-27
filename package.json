@@ -2,17 +2,15 @@
   "name": "react-vite-mono-starter",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "clean": "lerna clean",
     "build": "lerna run build",
-    "dev:app": "yarn workspace @react-vite-mono-starter/app dev",
-    "build:app": "yarn workspace @react-vite-mono-starter/app build",
-    "dev:ui": "yarn workspace @react-vite-mono-starter/ui storybook",
-    "build:ui": "yarn workspace @react-vite-mono-starter/ui build"
+    "dev:app": "pnpm --filter @react-vite-mono-starter/app dev",
+    "build:app": "pnpm --filter @react-vite-mono-starter/app build",
+    "dev:ui": "pnpm --filter @react-vite-mono-starter/ui storybook",
+    "build:ui": "pnpm --filter @react-vite-mono-starter/ui build"
   },
+  "packageManager": "pnpm@12.15.0",
   "devDependencies": {
     "lerna": "^10.1.1"
   }

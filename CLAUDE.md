@@ -19,15 +19,17 @@ Right now it holds one app, one `Button` component, and a handful of utilities. 
 - **React 19.3**
 - **Vite 8** (Rolldown-based) with `@vitejs/plugin-react` 6, a single version shared by every package
 - **Storybook 10** (`@storybook/react-vite`, plus `@storybook/addon-docs` for autodocs) in `packages/ui`
-- **Yarn 1 workspaces** for linking + **Lerna 10** (Nx-powered) for running scripts across packages
+- **pnpm 12 workspaces** for installing and linking (version pinned via `packageManager`) + **Lerna 10** (Nx-powered) for running scripts across packages
 - **ESLint 10** flat config, in `packages/app` only
 
 ## Layout
 
 ```
 .
-├── package.json          # workspaces: packages/*; root scripts
-├── lerna.json            # independent versioning, npmClient: yarn
+├── package.json          # root scripts; packageManager: pnpm@12.15.0
+├── pnpm-workspace.yaml   # workspace globs (packages/*) + allowBuilds
+├── pnpm-lock.yaml
+├── lerna.json            # independent versioning, npmClient: pnpm
 └── packages/
     ├── app/              # @react-vite-mono-starter/app      – Vite SPA (the "build")
     │   ├── index.html    # Vite entry HTML → /src/main.jsx
@@ -48,26 +50,26 @@ Dependency direction: `app → ui → services`, and `app → services`. **Never
 
 Workspace packages are consumed **as source, not as built output**:
 
-- `ui` and `services` set `"main"`/`"exports"` to files in `src/`. Yarn symlinks them into `node_modules/@react-vite-mono-starter/*`.
+- `ui` and `services` set `"main"`/`"exports"` to files in `src/`. pnpm symlinks them into each consumer's `node_modules/@react-vite-mono-starter/*`.
 - The app's Vite dev server and build compile the ui JSX/CSS directly. Edits to `ui` or `services` hot-reload in the app with no rebuild step.
 - `packages/ui`'s `vite build` emits a library bundle (`dist/ui.es.js`, `dist/ui.umd.js`, `dist/ui.css`, React externalized), but **nothing in the repo consumes it**. It exists to prove the library builds and as a starting point for publishing. If you ever publish `ui`, `"main"`/`"exports"` must point at `dist/`.
-- Internal deps are declared with the exact version `"0.0.0"`, which matches the workspace packages' versions so Yarn links them locally.
+- Internal deps use the workspace protocol, `"workspace:*"`, so pnpm always links the local package and never fetches from the registry.
 
 ## Commands (run from repo root)
 
 | Command | What it does |
 |---|---|
-| `yarn install` | Install + link all workspaces |
-| `yarn dev:app` | Vite dev server for the app (http://localhost:5173) |
-| `yarn dev:ui` | Storybook for the ui library (http://localhost:6006) |
-| `yarn build` | `lerna run build`: builds `ui` then `app` (services has no build) |
-| `yarn build:app` / `yarn build:ui` | Build one package |
-| `yarn workspace @react-vite-mono-starter/app lint` | ESLint (app only) |
-| `yarn workspace @react-vite-mono-starter/app preview` | Serve the app's production build |
-| `yarn workspace @react-vite-mono-starter/ui build-storybook` | Static Storybook → `packages/ui/storybook-static/` |
-| `yarn clean` | `lerna clean`: deletes package `node_modules` |
+| `pnpm install` | Install + link all workspaces |
+| `pnpm dev:app` | Vite dev server for the app (http://localhost:5173) |
+| `pnpm dev:ui` | Storybook for the ui library (http://localhost:6006) |
+| `pnpm build` | `lerna run build`: builds `ui` then `app` (services has no build) |
+| `pnpm build:app` / `pnpm build:ui` | Build one package |
+| `pnpm --filter @react-vite-mono-starter/app lint` | ESLint (app only) |
+| `pnpm --filter @react-vite-mono-starter/app preview` | Serve the app's production build |
+| `pnpm --filter @react-vite-mono-starter/ui build-storybook` | Static Storybook → `packages/ui/storybook-static/` |
+| `pnpm clean` | `lerna clean`: deletes package `node_modules` |
 
-There are no tests. To verify a change, run `yarn build` and the app's lint, and check visually with `yarn dev:app` / `yarn dev:ui` when UI is involved.
+There are no tests. To verify a change, run `pnpm build` and the app's lint, and check visually with `pnpm dev:app` / `pnpm dev:ui` when UI is involved.
 
 ## Common tasks
 
@@ -87,7 +89,7 @@ There are no tests. To verify a change, run `yarn build` and the app's lint, and
 1. Copy `packages/app` to `packages/<name>` (drop `dist/` and `node_modules/`).
 2. Rename it in `package.json` to `@react-vite-mono-starter/<name>`, and update `<title>` in `index.html`.
 3. Give it a distinct dev port in `vite.config.js` (`server: { port: 5174 }`) so it can run alongside the app.
-4. Add `dev:<name>` / `build:<name>` scripts to the root `package.json` and run `yarn install`. `yarn build` picks it up automatically through `packages/*`.
+4. Add `dev:<name>` / `build:<name>` scripts to the root `package.json` and run `pnpm install`. `pnpm build` picks it up automatically through `packages/*`.
 
 ## Conventions
 
@@ -99,10 +101,15 @@ There are no tests. To verify a change, run `yarn build` and the app's lint, and
 
 ## Gotchas
 
+- **pnpm's `node_modules` is strict.** A package can only import what its own `package.json` declares; there is no hoisting. If you add an import, add the dependency to that package (`pnpm --filter <pkg> add <dep>`), not just to the root.
+- **Release-age guard.** pnpm refuses versions published less than a day ago. If a just-released version fails to install, wait, or use a range that allows the previous patch. Don't add `minimumReleaseAgeExclude` entries unless a human asks for one.
+- **Build scripts are opt-in.** Only the packages under `allowBuilds` in `pnpm-workspace.yaml` (`esbuild`, `nx`) may run install scripts. If a new dependency needs one, `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS`; review the package, then run `pnpm approve-builds <pkg>`.
+- **`pnpm clean` runs the repo's `clean` script** (`lerna clean`), not pnpm's built-in clean command. To reset installs, delete `node_modules` and `packages/*/node_modules` and run `pnpm install`.
+- `pnpm peers check` reports an unmet `conventional-commits-parser` peer inside Lerna's changelog tooling. Those tools are only used for publishing, which this repo doesn't do, so the warning is harmless.
 - **Keep a single Vite version.** `app` and `ui` both declare `vite@^8`. Bump them together, and check that `@vitejs/plugin-react` and `@storybook/react-vite` peer ranges allow the new major first.
 - **Vite 8 uses Rolldown.** Configure bundler options under `build.rolldownOptions` (the old `rollupOptions` is a deprecated alias). In ESM config files, use `import.meta.dirname` instead of `__dirname`.
 - **Storybook 9+ consolidated addons.** Controls, actions, viewport, backgrounds, and interactions are built into `storybook` core. Don't reinstall `@storybook/addon-essentials`, `addon-interactions`, or `@storybook/blocks` (they stopped at 8.6). Doc blocks import from `@storybook/addon-docs/blocks`.
-- `yarn build-storybook` warns about a chunk over 500 kB. That's Storybook's own bundle and expected.
+- `build-storybook` warns about a chunk over 500 kB. That's Storybook's own bundle and expected.
 - `lerna.json` uses `"version": "independent"`, but every package is `private` and at `0.0.0`. Nothing is published.
 - Only `app` has ESLint config. `ui` and `services` are not linted.
 - The `ui` build doesn't externalize `@react-vite-mono-starter/services`, so services code gets bundled into `ui/dist`.
