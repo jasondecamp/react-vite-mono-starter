@@ -32,7 +32,7 @@ import { classNames, getLocalStorage } from '@react-vite-mono-starter/services/h
 
 - `formatDate(date, locale)` - Format dates to readable strings
 - `debounce(func, wait)` - Debounce function execution
-- `generateId()` - Generate unique IDs
+- `generateId()` - Generate a unique ID (UUID v4 via `crypto.randomUUID()`)
 - `capitalize(str)` - Capitalize first letter of string
 
 ### Helpers

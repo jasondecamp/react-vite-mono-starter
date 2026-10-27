@@ -4,6 +4,7 @@ const config = {
   addons: [
     '@storybook/addon-docs',
     '@storybook/addon-links',
+    '@storybook/addon-vitest',
   ],
   framework: {
     name: '@storybook/react-vite',

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      # Installs the pnpm version pinned in package.json `packageManager`, Node.js from .nvmrc,
+      # restores the pnpm store cache, then runs `pnpm install --frozen-lockfile`.
+      - uses: pnpm/setup@v3
+        with:
+          cache: true
+          require-lockfile: true
+
+      - name: Lint
+        run: pnpm lint
+
+      # The ui package runs stories as tests in headless Chromium.
+      - name: Install Playwright Chromium
+        run: pnpm --filter @react-vite-mono-starter/ui exec playwright install --with-deps chromium
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Build Storybook
+        run: pnpm --filter @react-vite-mono-starter/ui build-storybook
+
+      # Vitest browser mode saves a screenshot for each failing story test.
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-screenshots
+          path: packages/**/__screenshots__/
+          if-no-files-found: ignore
