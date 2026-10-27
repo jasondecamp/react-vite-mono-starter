@@ -15,11 +15,12 @@ Right now it holds one app, one `Button` component, and a handful of utilities. 
 ## Stack
 
 - Plain **JavaScript + JSX** (ES modules, `"type": "module"` everywhere). No TypeScript, no test runner, no CSS framework.
-- **React 19.2**
-- **Vite 7** (app); the ui package declares Vite 5 (see Gotchas)
-- **Storybook 8.6** (`@storybook/react-vite`) in `packages/ui`
-- **Yarn 1 workspaces** for linking + **Lerna 8** (Nx-powered) for running scripts across packages
-- **ESLint 9** flat config, in `packages/app` only
+- **Node `^22.22.2` or `^24.15`** (required by Lerna 10)
+- **React 19.3**
+- **Vite 8** (Rolldown-based) with `@vitejs/plugin-react` 6, a single version shared by every package
+- **Storybook 10** (`@storybook/react-vite`, plus `@storybook/addon-docs` for autodocs) in `packages/ui`
+- **Yarn 1 workspaces** for linking + **Lerna 10** (Nx-powered) for running scripts across packages
+- **ESLint 10** flat config, in `packages/app` only
 
 ## Layout
 
@@ -98,7 +99,10 @@ There are no tests. To verify a change, run `yarn build` and the app's lint, and
 
 ## Gotchas
 
-- **Vite version split.** `ui` declares `vite@^5.4.11` (Storybook 8 compatibility), while `app` uses `^7.2.2`. Both resolve in `yarn.lock`, but hoisting can let `ui`'s `vite` bin point at the root Vite 7. Check which Vite actually runs before debugging Vite-version-specific behavior.
+- **Keep a single Vite version.** `app` and `ui` both declare `vite@^8`. Bump them together, and check that `@vitejs/plugin-react` and `@storybook/react-vite` peer ranges allow the new major first.
+- **Vite 8 uses Rolldown.** Configure bundler options under `build.rolldownOptions` (the old `rollupOptions` is a deprecated alias). In ESM config files, use `import.meta.dirname` instead of `__dirname`.
+- **Storybook 9+ consolidated addons.** Controls, actions, viewport, backgrounds, and interactions are built into `storybook` core. Don't reinstall `@storybook/addon-essentials`, `addon-interactions`, or `@storybook/blocks` (they stopped at 8.6). Doc blocks import from `@storybook/addon-docs/blocks`.
+- `yarn build-storybook` warns about a chunk over 500 kB. That's Storybook's own bundle and expected.
 - `lerna.json` uses `"version": "independent"`, but every package is `private` and at `0.0.0`. Nothing is published.
 - Only `app` has ESLint config. `ui` and `services` are not linted.
 - The `ui` build doesn't externalize `@react-vite-mono-starter/services`, so services code gets bundled into `ui/dist`.

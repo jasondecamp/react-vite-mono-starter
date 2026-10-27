@@ -14,7 +14,7 @@ This monorepo uses [Lerna](https://lerna.js.org/) and Yarn Workspaces to manage 
 
 ### Prerequisites
 
-- Node.js v20 or higher
+- Node.js v22.22.2+ or v24.15+ (required by Lerna 10)
 - Yarn v1.22 or higher
 
 ### Installation
@@ -81,12 +81,12 @@ import { getLocalStorage } from '@react-vite-mono-starter/services/helpers';
 
 ## 🛠️ Technologies
 
-- **React 19.2** - UI library
-- **Vite 7.2 / 5.4** - Build tool and dev server
-- **Lerna 8.1** - Monorepo management
+- **React 19.3** - UI library
+- **Vite 8.3** - Build tool and dev server
+- **Lerna 10.1** - Monorepo management
 - **Yarn Workspaces** - Package linking
-- **Storybook 8.6** - Component development environment
-- **ESLint** - Code linting
+- **Storybook 10.6** - Component development environment
+- **ESLint 10** - Code linting
 
 ## 📝 Adding New Components
 
