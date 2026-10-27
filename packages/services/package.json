@@ -8,5 +8,12 @@
     ".": "./src/index.js",
     "./utils": "./src/utils/index.js",
     "./helpers": "./src/helpers/index.js"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.3",
+    "vitest": "^5.0.5"
+  },
+  "scripts": {
+    "test": "vitest run"
   }
 }

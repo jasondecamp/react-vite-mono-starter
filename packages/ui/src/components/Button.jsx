@@ -1,4 +1,3 @@
-import React from 'react';
 import { classNames } from '@react-vite-mono-starter/services/helpers';
 import './Button.css';
 

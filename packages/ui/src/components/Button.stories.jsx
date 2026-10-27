@@ -1,3 +1,4 @@
+import { expect, fn } from 'storybook/test';
 import { Button } from './Button';
 
 export default {
@@ -7,6 +8,10 @@ export default {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  // A spy for every story: clicks show in the Actions panel, and play functions can assert on it.
+  args: {
+    onClick: fn(),
+  },
   argTypes: {
     variant: {
       control: 'select',
@@ -27,6 +32,14 @@ export const Primary = {
     label: 'Primary Button',
     variant: 'primary',
     size: 'medium',
+  },
+  // Interaction test: runs in the Storybook UI and as a Vitest test (`pnpm test`).
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole('button', { name: 'Primary Button' });
+
+    await userEvent.click(button);
+
+    await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };
 
@@ -56,5 +69,13 @@ export const Disabled = {
   args: {
     label: 'Disabled Button',
     disabled: true,
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole('button', { name: 'Disabled Button' });
+
+    await expect(button).toBeDisabled();
+    await userEvent.click(button);
+
+    await expect(args.onClick).not.toHaveBeenCalled();
   },
 };

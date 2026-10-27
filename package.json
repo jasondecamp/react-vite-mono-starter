@@ -2,19 +2,28 @@
   "name": "react-vite-mono-starter",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "bootstrap": "lerna bootstrap",
     "clean": "lerna clean",
     "build": "lerna run build",
-    "dev:app": "yarn workspace @react-vite-mono-starter/app dev",
-    "build:app": "yarn workspace @react-vite-mono-starter/app build",
-    "dev:ui": "yarn workspace @react-vite-mono-starter/ui storybook",
-    "build:ui": "yarn workspace @react-vite-mono-starter/ui build"
+    "dev:app": "pnpm --filter @react-vite-mono-starter/app dev",
+    "build:app": "pnpm --filter @react-vite-mono-starter/app build",
+    "dev:ui": "pnpm --filter @react-vite-mono-starter/ui storybook",
+    "build:ui": "pnpm --filter @react-vite-mono-starter/ui build",
+    "lint": "eslint .",
+    "test": "lerna run test"
+  },
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   },
   "devDependencies": {
-    "lerna": "^8.1.8"
-  }
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "eslint-plugin-storybook": "^10.6.4",
+    "globals": "^17.13.0",
+    "lerna": "^10.1.1"
+  },
+  "type": "module"
 }

@@ -1,0 +1,38 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './components/Button.stories';
+
+<Meta title="Introduction" />
+
+# UI component library
+
+`@react-vite-mono-starter/ui` is the shared React component library for every app in this monorepo. This Storybook is its living documentation: each component has a **Docs** page with a props table generated from its stories, plus one story per meaningful state that you can tweak in the **Controls** panel.
+
+## Using a component
+
+Apps import components from the package root:
+
+```jsx
+import { Button } from '@react-vite-mono-starter/ui';
+
+<Button label="Save" variant="primary" onClick={handleSave} />
+```
+
+Apps compile the library from source, so changes to a component show up in a running app immediately, with no build step.
+
+Here is the `Primary` Button story embedded in this page:
+
+<Canvas of={ButtonStories.Primary} />
+
+## Adding a component
+
+1. Create `src/components/<Name>.jsx` (a named export) and `<Name>.css` next to it. Build class names with `classNames` from `@react-vite-mono-starter/services/helpers`, using the pattern `block`, `block--variant`, `block--size`.
+2. Add `<Name>.stories.jsx` with `tags: ['autodocs']` for a generated Docs page, and a story for each state.
+3. Export the component from `src/index.js`.
+
+## Stories are tests
+
+Every story also runs as an automated test in a headless browser (`pnpm test`), so a story that fails to render fails the build. A story with a `play` function is an interaction test: it clicks, types, and asserts like a user would. Open the **Interactions** panel on the [Primary Button story](?path=/story/components-button--primary) to watch one step by step.
+
+## Writing docs pages
+
+This page is an MDX file (`src/Introduction.mdx`): Markdown that can embed live stories with doc blocks such as `Canvas`. Storybook picks up any `src/**/*.mdx` file. Add one when a component or pattern needs longer-form guidance than its generated Docs page.

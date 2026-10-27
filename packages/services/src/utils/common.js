@@ -32,11 +32,12 @@ export const debounce = (func, wait = 300) => {
 };
 
 /**
- * Generate a unique ID
+ * Generate a unique ID (RFC 4122 v4 UUID).
+ * In browsers this requires a secure context (HTTPS or localhost).
  * @returns {string} Unique identifier
  */
 export const generateId = () => {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return crypto.randomUUID();
 };
 
 /**
