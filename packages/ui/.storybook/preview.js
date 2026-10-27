@@ -7,6 +7,12 @@ const preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      // Show the Introduction docs page first in the sidebar.
+      storySort: {
+        order: ['Introduction', 'Components'],
+      },
+    },
   },
 };
 

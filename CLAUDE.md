@@ -47,6 +47,7 @@ Right now it holds one app, one `Button` component, and a handful of utilities. 
     ├── ui/               # @react-vite-mono-starter/ui       – component library + Storybook
     │   ├── .storybook/   # main.js (story globs, addons), preview.js
     │   ├── src/index.js  # public exports
+    │   ├── src/Introduction.mdx  # Storybook landing docs page (MDX)
     │   ├── src/components/Button.{jsx,css,stories.jsx,test.jsx}
     │   ├── vite.config.js    # library build + Vitest projects: `unit` (jsdom) and `storybook` (Chromium)
     │   └── vitest.setup.js
@@ -133,7 +134,6 @@ To verify a change, run `pnpm lint && pnpm test && pnpm build`, which is what CI
 - **`pnpm clean` runs the repo's `clean` script** (`lerna clean`), not pnpm's built-in clean command. To reset installs, delete `node_modules` and `packages/*/node_modules` and run `pnpm install`.
 - **Story tests need Chromium.** If `pnpm test` fails in `ui` with a missing-browser error, run the `playwright install chromium` command from the table above. CI installs it with `--with-deps`.
 - A failing story test saves a screenshot to `__screenshots__/` next to the story (gitignored; CI uploads them as an artifact).
-- Story test runs print `No story files found for the specified pattern: src/**/*.mdx`. That's expected until someone adds an MDX docs page; leave the glob in place.
 - `crypto.randomUUID()` (used by `generateId`) only exists in secure contexts: HTTPS or localhost.
 - `pnpm peers check` reports an unmet `conventional-commits-parser` peer inside Lerna's changelog tooling. Those tools are only used for publishing, which this repo doesn't do, so the warning is harmless.
 - **Keep a single Vite version.** `app` and `ui` both declare `vite@^8`. Bump them together, and check that `@vitejs/plugin-react`, `vitest`, and `@storybook/react-vite` peer ranges allow the new major first.
